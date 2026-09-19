@@ -84,14 +84,24 @@ struct BalanceCardView: View {
         }
         .padding(.horizontal, Spacing.m)
         .padding(.vertical, Spacing.s + 2)
-        .background(
-            RoundedRectangle(cornerRadius: Radius.medium, style: .continuous)
-                .fill(.white.opacity(0.14))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: Radius.medium, style: .continuous)
-                .strokeBorder(.white.opacity(0.16), lineWidth: 1)
-        )
+        .background(nestedPillBackground)
+    }
+
+    /// This needs to read as a distinctly different, lighter surface
+    /// "cut into" the card — not the same tint at a slightly different
+    /// opacity, which just blends into the card behind it. Layers actual
+    /// blur material plus a brighter frosted tint and its own top
+    /// highlight, so it has real depth of its own rather than looking like
+    /// a translucent rectangle floating on the same background.
+    private var nestedPillBackground: some View {
+        let shape = RoundedRectangle(cornerRadius: Radius.medium, style: .continuous)
+        return ZStack {
+            shape.fill(.ultraThinMaterial)
+            shape.fill(.white.opacity(0.22))
+            LinearGradient(colors: [.white.opacity(0.25), .clear], startPoint: .top, endPoint: .bottom)
+        }
+        .clipShape(shape)
+        .overlay(shape.strokeBorder(.white.opacity(0.3), lineWidth: 1))
     }
 
     private var changeValue: some View {
