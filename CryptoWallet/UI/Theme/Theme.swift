@@ -20,15 +20,20 @@ enum Theme {
     ))
 
     /// Base tint for glass surfaces, layered under `.ultraThinMaterial` /
-    /// Liquid Glass so cards keep a consistent tone across both.
+    /// Liquid Glass so cards keep a consistent tone across both. The dark
+    /// value used to be a dark navy (#151A2E) at low alpha, which on the
+    /// near-black background just looked like a slightly different dark
+    /// blob instead of actual glass — real "frosted glass" on a dark
+    /// background needs a *lighter* tint so it visibly catches light, so
+    /// this is a lighter blue-gray at higher alpha instead.
     static let glassTint = Color(dynamic: UIColor(
         light: UIColor(hex: "#FFFFFF").withAlphaComponent(0.55),
-        dark: UIColor(hex: "#151A2E").withAlphaComponent(0.45)
+        dark: UIColor(hex: "#3A4270").withAlphaComponent(0.55)
     ))
 
     static let glassBorder = Color(dynamic: UIColor(
         light: UIColor(hex: "#1A1B2E").withAlphaComponent(0.08),
-        dark: UIColor.white.withAlphaComponent(0.10)
+        dark: UIColor.white.withAlphaComponent(0.16)
     ))
 
     // MARK: Text
@@ -72,11 +77,13 @@ enum Theme {
         endPoint: .bottomTrailing
     )
 
-    /// The signature glossy card look — a single tight blue→indigo ramp
-    /// with a bright highlight corner, matching a real glass fintech card
-    /// rather than a flat multi-hue fill.
+    /// The signature glossy card look. Kept to two bright, mid-tone stops
+    /// on purpose — the earlier three-stop version ran all the way down to
+    /// `indigoDeep`, which made the bottom-right corner look muddy and
+    /// near-black in a real screenshot instead of the reference's evenly
+    /// lit, vivid royal blue.
     static let balanceCardGradient = LinearGradient(
-        colors: [Color(hex: "#3D62FF"), Color(hex: "#2A3FC7"), indigoDeep],
+        colors: [Color(hex: "#5B7CFF"), Color(hex: "#4A3FC9")],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )

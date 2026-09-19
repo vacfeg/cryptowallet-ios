@@ -100,18 +100,21 @@ struct QuickActionButton: View {
             action()
         } label: {
             VStack(spacing: Spacing.xs) {
+                // Solid white, not a faint translucent circle — needs to
+                // read as a real button against the card at a glance, the
+                // way the reference design's white pills do.
                 Circle()
-                    .fill(.white.opacity(0.16))
-                    .frame(width: 52, height: 52)
+                    .fill(.white)
+                    .frame(width: 54, height: 54)
                     .overlay(
                         Image(systemName: icon)
-                            .font(.system(size: 18, weight: .semibold))
-                            .foregroundStyle(.white)
+                            .font(.system(size: 19, weight: .bold))
+                            .foregroundStyle(Theme.indigo)
                     )
-                    .overlay(Circle().strokeBorder(.white.opacity(0.18), lineWidth: 1))
+                    .shadow(color: .black.opacity(0.18), radius: 6, x: 0, y: 3)
                 Text(title)
-                    .font(Typography.caption)
-                    .foregroundStyle(.white.opacity(0.9))
+                    .font(Typography.caption.weight(.semibold))
+                    .foregroundStyle(.white)
             }
         }
         .buttonStyle(.plain)

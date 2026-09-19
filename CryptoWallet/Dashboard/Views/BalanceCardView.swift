@@ -47,21 +47,30 @@ struct BalanceCardView: View {
         .padding(Spacing.l)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: Radius.large, style: .continuous)
+            RoundedRectangle(cornerRadius: cardRadius, style: .continuous)
                 .fill(Theme.balanceCardGradient)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: Radius.large, style: .continuous)
-                .strokeBorder(.white.opacity(0.16), lineWidth: 1)
+            RoundedRectangle(cornerRadius: cardRadius, style: .continuous)
+                .strokeBorder(.white.opacity(0.22), lineWidth: 1)
         )
+        // A fixed soft diagonal highlight band, always visible — the
+        // reference card's glossy reflection isn't subtle, it's a clear
+        // bright streak across the upper third.
         .overlay(
-            LinearGradient(colors: [.white.opacity(0.10), .clear], startPoint: .top, endPoint: .center)
-                .clipShape(RoundedRectangle(cornerRadius: Radius.large, style: .continuous))
-                .allowsHitTesting(false)
+            LinearGradient(
+                colors: [.white.opacity(0.28), .white.opacity(0.05), .clear],
+                startPoint: .topLeading,
+                endPoint: .bottom
+            )
+            .clipShape(RoundedRectangle(cornerRadius: cardRadius, style: .continuous))
+            .allowsHitTesting(false)
         )
-        .overlay(CardSheen().clipShape(RoundedRectangle(cornerRadius: Radius.large, style: .continuous)))
+        .overlay(CardSheen().clipShape(RoundedRectangle(cornerRadius: cardRadius, style: .continuous)))
         .cardShadow()
     }
+
+    private var cardRadius: CGFloat { 32 }
 }
 
 /// A slow diagonal light streak drifting across the card — the glossy
