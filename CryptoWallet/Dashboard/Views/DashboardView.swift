@@ -18,7 +18,7 @@ struct DashboardView: View {
         NavigationView {
             ZStack {
                 Theme.background.ignoresSafeArea()
-                AnimatedBackground(intensity: 0.85).ignoresSafeArea()
+                HeroGlowBackground()
 
                 ScrollView {
                     VStack(spacing: Spacing.l) {
