@@ -122,7 +122,11 @@ per the architecture the app was scoped against.
 
 1. Install [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`) —
    the `.xcodeproj` is generated from `project.yml`, not committed, so it's
-   never stale or full of merge conflicts.
+   never stale or full of merge conflicts. If your Xcode is from the 15.x
+   line specifically, use XcodeGen 2.43.0 instead of latest (see the comment
+   in `.github/workflows/ios-build.yml` — newer XcodeGen releases write a
+   project file format newer Xcode 15.x can't open). Xcode 16+ doesn't have
+   this problem.
 2. `cp Config/Secrets.xcconfig.example Config/Secrets.xcconfig` (fill in keys, optional).
 3. `xcodegen generate`
 4. Open `CryptoWallet.xcodeproj`, select the `CryptoWallet` scheme, pick a

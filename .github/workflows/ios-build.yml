@@ -38,8 +38,20 @@ jobs:
           sudo xcode-select -s "$XCODE_PATH"
           xcodebuild -version
 
-      - name: Install XcodeGen
-        run: brew install xcodegen
+      - name: Install XcodeGen (pinned, pre-Xcode-16 release)
+        # `brew install xcodegen` pulls whatever's newest, which defaults to
+        # writing a .pbxproj in a project-file format newer than Xcode 15.4
+        # can open ("cannot be opened because it is in a future Xcode
+        # project file format (77)" — a real CI failure). XcodeGen doesn't
+        # adapt its output format to the active `xcode-select` Xcode; it's
+        # fixed per XcodeGen release. Pinning to 2.43.0 (April 2024, well
+        # before Xcode 16 shipped in September 2024) guarantees a format
+        # Xcode 15.4 can read.
+        run: |
+          curl -L "https://github.com/yonaskolb/XcodeGen/releases/download/2.43.0/xcodegen.zip" -o xcodegen.zip
+          unzip -q xcodegen.zip -d xcodegen_tool
+          chmod +x xcodegen_tool/bin/xcodegen
+          echo "$GITHUB_WORKSPACE/xcodegen_tool/bin" >> "$GITHUB_PATH"
 
       - name: Generate Xcode project
         run: xcodegen generate
