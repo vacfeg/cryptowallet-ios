@@ -3,14 +3,20 @@ import Foundation
 /// All fiat/crypto number formatting funnels through here so the UI never
 /// accidentally prints "NaN", "Optional(...)", or a raw unlocalized double.
 enum AmountFormatter {
+    /// Builds the string manually (symbol + decimal number) instead of
+    /// handing `NumberFormatter` a `currencyCode` — `.currency` style
+    /// renders USD as "US$" on plenty of device locales (anywhere that
+    /// needs to disambiguate from a local "$"), which isn't what the
+    /// design calls for. This always prints exactly `currency.symbol`.
     static func fiat(_ value: Decimal?, currency: FiatCurrency) -> String {
         guard let value, value.isFinite else { return "--" }
         let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = currency.rawValue
+        formatter.numberStyle = .decimal
         formatter.maximumFractionDigits = 2
         formatter.minimumFractionDigits = 2
-        return formatter.string(from: value as NSDecimalNumber) ?? "--"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        let number = formatter.string(from: value as NSDecimalNumber) ?? "\(value)"
+        return "\(currency.symbol)\(number)"
     }
 
     static func percent(_ value: Decimal?) -> String {
