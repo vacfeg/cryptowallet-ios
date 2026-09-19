@@ -15,17 +15,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: List available Xcode versions
+        run: ls -d /Applications/Xcode_*.app
+
       - name: Select an Xcode matching WalletCore's prebuilt Swift ABI
-        # WalletCore ships a prebuilt XCFramework compiled with a specific
-        # Swift compiler version. The newest Xcode on the runner is often
-        # AHEAD of that (e.g. Swift 6.x vs. the framework's 5.10), which
-        # fails with "this SDK is not supported by the compiler" — so, unlike
-        # a normal pure-source project, we deliberately pick the OLDEST
-        # available Xcode 15.x here rather than the newest, since that's what
-        # WalletCore 4.8.3's binary was built against. If WalletCore ships a
-        # newer XCFramework later, this can go back to picking the newest.
+        # WalletCore ships a prebuilt XCFramework compiled with Swift 5.10
+        # specifically (WalletCore 4.8.3, checked from a real CI failure log:
+        # Xcode 16.2 = Swift 6.0.3 was too NEW, then Xcode 15.0.1 = Swift 5.9
+        # was too OLD — both failed with "this SDK is not supported by the
+        # compiler"). Swift 5.10 shipped only with Xcode 15.3 and 15.4, so
+        # pick the newest available Xcode in the 15.x line (not the oldest),
+        # which lands on 15.4 if present. If WalletCore ships a newer
+        # XCFramework later, this whole step can go back to picking the
+        # newest Xcode available, full stop.
         run: |
-          XCODE_PATH=$(ls -d /Applications/Xcode_15*.app 2>/dev/null | sort -V | head -n 1)
+          XCODE_PATH=$(ls -d /Applications/Xcode_15*.app 2>/dev/null | sort -V | tail -n 1)
           if [ -z "$XCODE_PATH" ]; then
             echo "No Xcode 15.x found, falling back to the newest available Xcode"
             XCODE_PATH=$(ls -d /Applications/Xcode_*.app | sort -V | tail -n 1)
