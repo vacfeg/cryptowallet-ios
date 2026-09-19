@@ -18,7 +18,7 @@ struct DashboardView: View {
         NavigationView {
             ZStack {
                 Theme.background.ignoresSafeArea()
-                AnimatedBackground(intensity: 0.5).ignoresSafeArea()
+                AnimatedBackground(intensity: 0.85).ignoresSafeArea()
 
                 ScrollView {
                     VStack(spacing: Spacing.l) {
@@ -32,9 +32,11 @@ struct DashboardView: View {
                                 change24h: viewModel.portfolioChange24h,
                                 currency: appState.settings.currency,
                                 isHidden: appState.settings.hideBalances,
+                                network: appState.selectedNetwork,
                                 onSend: { showSend = true },
                                 onReceive: { showReceive = true },
-                                onSwap: { showSwap = true }
+                                onSwap: { showSwap = true },
+                                onNetworkTap: { showNetworkSelector = true }
                             )
                         }
 
@@ -79,27 +81,18 @@ struct DashboardView: View {
         HStack {
             HStack(spacing: Spacing.s) {
                 ZStack {
-                    Circle().fill(Theme.brandGradient).frame(width: 40, height: 40)
+                    Circle().fill(Theme.brandGradient).frame(width: 44, height: 44)
                     Image(systemName: "person.fill")
                         .foregroundStyle(.white)
-                        .font(.system(size: 16))
+                        .font(.system(size: 17))
                 }
                 VStack(alignment: .leading, spacing: 1) {
                     Text(appState.walletManager.activeWallet?.name ?? "Wallet")
                         .font(Typography.headline)
                         .foregroundStyle(Theme.textPrimary)
-                    Button {
-                        HapticManager.selectionChanged()
-                        showNetworkSelector = true
-                    } label: {
-                        HStack(spacing: 4) {
-                            Text(appState.selectedNetwork.name)
-                            Image(systemName: "chevron.down")
-                                .font(.system(size: 9, weight: .semibold))
-                        }
+                    Text(account?.address.truncatedAddress ?? appState.selectedNetwork.name)
                         .font(Typography.caption)
                         .foregroundStyle(Theme.textSecondary)
-                    }
                 }
             }
 
@@ -111,7 +104,7 @@ struct DashboardView: View {
             } label: {
                 Image(systemName: appState.settings.hideBalances ? "eye.slash.fill" : "eye.fill")
                     .foregroundStyle(Theme.textPrimary)
-                    .frame(width: 36, height: 36)
+                    .frame(width: 40, height: 40)
                     .glassSurface(cornerRadius: Radius.pill)
             }
         }
