@@ -57,7 +57,7 @@ struct ReviewSendView: View {
                 row("Total", totalText, emphasized: true)
             }
             .padding(.horizontal, Spacing.m)
-            .glassSurface()
+            .glassSurface(elevated: true)
             .padding(.horizontal, Spacing.l)
             .padding(.top, Spacing.l)
 

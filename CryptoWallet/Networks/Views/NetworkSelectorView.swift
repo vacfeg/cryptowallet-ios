@@ -95,6 +95,6 @@ struct NetworkSelectorView: View {
             .padding(Spacing.m)
             .glassSurface(cornerRadius: Radius.medium, tint: isSelected ? Theme.glassTint : Theme.glassTint.opacity(0.5))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(ScaleButtonStyle(scale: 0.97))
     }
 }

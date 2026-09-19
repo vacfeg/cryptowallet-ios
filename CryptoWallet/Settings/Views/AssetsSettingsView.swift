@@ -34,7 +34,7 @@ struct AssetsSettingsView: View {
                         PrimaryButton(title: "Add Token", isDisabled: !canAdd) { addToken() }
                     }
                     .padding(Spacing.l)
-                    .glassSurface()
+                    .glassSurface(elevated: true)
 
                     if !customTokens.isEmpty {
                         VStack(alignment: .leading, spacing: Spacing.s) {
@@ -61,7 +61,7 @@ struct AssetsSettingsView: View {
                                 }
                             }
                             .padding(.horizontal, Spacing.m)
-                            .glassSurface()
+                            .glassSurface(elevated: true)
                         }
                     }
                 }

@@ -92,7 +92,7 @@ struct AssetDetailView: View {
             }
         }
         .padding(.horizontal, Spacing.m)
-        .glassSurface()
+        .glassSurface(elevated: true)
     }
 
     private func row(_ label: String, _ value: String) -> some View {

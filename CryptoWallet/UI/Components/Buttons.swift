@@ -87,40 +87,6 @@ struct SecondaryButton: View {
     }
 }
 
-/// A compact circular action button used for Send / Receive / Swap on the
-/// dashboard balance card.
-struct QuickActionButton: View {
-    let title: String
-    let icon: String
-    let action: () -> Void
-
-    var body: some View {
-        Button {
-            HapticManager.tap()
-            action()
-        } label: {
-            VStack(spacing: Spacing.xs) {
-                // Solid white, not a faint translucent circle — needs to
-                // read as a real button against the card at a glance, the
-                // way the reference design's white pills do.
-                Circle()
-                    .fill(.white)
-                    .frame(width: 54, height: 54)
-                    .overlay(
-                        Image(systemName: icon)
-                            .font(.system(size: 19, weight: .bold))
-                            .foregroundStyle(Theme.indigo)
-                    )
-                    .shadow(color: .black.opacity(0.18), radius: 6, x: 0, y: 3)
-                Text(title)
-                    .font(Typography.caption.weight(.semibold))
-                    .foregroundStyle(.white)
-            }
-        }
-        .buttonStyle(.plain)
-    }
-}
-
 /// Reports press state without swallowing the tap gesture, so we can drive
 /// a scale animation while still using a normal `Button`.
 private struct PressReportingButtonStyle: ButtonStyle {
@@ -131,5 +97,19 @@ private struct PressReportingButtonStyle: ButtonStyle {
             .onChange(of: configuration.isPressed) { newValue in
                 isPressed = newValue
             }
+    }
+}
+
+/// A lighter-weight tactile press effect for buttons that don't need
+/// external press-state tracking — `ButtonStyle` already hands `makeBody`
+/// `configuration.isPressed` directly, so this just scales the label with
+/// it, no `@State` plumbing required.
+struct ScaleButtonStyle: ButtonStyle {
+    var scale: CGFloat = 0.94
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? scale : 1)
+            .animation(.spring(response: 0.25, dampingFraction: 0.65), value: configuration.isPressed)
     }
 }

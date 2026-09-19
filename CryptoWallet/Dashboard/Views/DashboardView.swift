@@ -132,14 +132,14 @@ struct DashboardView: View {
                         Button { selectedHolding = holding } label: {
                             AssetRowView(holding: holding, currency: appState.settings.currency, isHidden: appState.settings.hideBalances)
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(ScaleButtonStyle(scale: 0.98))
                         if holding.id != viewModel.holdings.last?.id {
                             Divider().overlay(Theme.glassBorder)
                         }
                     }
                 }
                 .padding(.horizontal, Spacing.m)
-                .glassSurface()
+                .glassSurface(elevated: true)
             }
         }
     }

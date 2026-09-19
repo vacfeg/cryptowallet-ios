@@ -25,7 +25,7 @@ struct SecuritySettingsView: View {
                         toggleRow(title: "Hide Balances", subtitle: "Mask amounts on the dashboard", isOn: $appState.settings.hideBalances)
                     }
                     .padding(.horizontal, Spacing.m)
-                    .glassSurface()
+                    .glassSurface(elevated: true)
 
                     VStack(alignment: .leading, spacing: Spacing.s) {
                         Text("Auto-Lock")
@@ -53,7 +53,7 @@ struct SecuritySettingsView: View {
                             }
                         }
                         .padding(.horizontal, Spacing.m)
-                        .glassSurface()
+                        .glassSurface(elevated: true)
                     }
 
                     if let wallet = appState.walletManager.activeWallet {
@@ -66,7 +66,7 @@ struct SecuritySettingsView: View {
                             Spacer()
                         }
                         .padding(Spacing.m)
-                        .glassSurface()
+                        .glassSurface(elevated: true)
                     }
 
                     Button(role: .destructive) {
@@ -77,7 +77,7 @@ struct SecuritySettingsView: View {
                             .foregroundStyle(Theme.danger)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, Spacing.m)
-                            .glassSurface()
+                            .glassSurface(elevated: true)
                     }
                 }
                 .padding(Spacing.l)

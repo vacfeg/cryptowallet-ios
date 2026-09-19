@@ -16,7 +16,7 @@ struct NotificationsSettingsView: View {
                     Toggle("", isOn: $appState.settings.notificationsEnabled).labelsHidden().tint(Theme.violet)
                 }
                 .padding(Spacing.m)
-                .glassSurface()
+                .glassSurface(elevated: true)
 
                 Text("This wallet has no backend, so notifications require your device to poll the network locally — this toggle is wired up but the polling service is a follow-up feature.")
                     .font(Typography.caption)

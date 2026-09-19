@@ -16,7 +16,10 @@ import SwiftUI
 struct GlassCard<Content: View>: View {
     var cornerRadius: CGFloat = Radius.large
     var tint: Color = Theme.glassTint
+    var elevated: Bool = false
     @ViewBuilder var content: Content
+
+    private var shape: RoundedRectangle { RoundedRectangle(cornerRadius: cornerRadius, style: .continuous) }
 
     var body: some View {
         content
@@ -25,39 +28,73 @@ struct GlassCard<Content: View>: View {
 
     private var background: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                .fill(.ultraThinMaterial)
-            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                .fill(tint)
-            LinearGradient(
-                colors: [Color.white.opacity(0.10), Color.white.opacity(0)],
-                startPoint: .top,
-                endPoint: .center
+            shape.fill(.ultraThinMaterial)
+
+            // A gradient tint, not a flat fill — a single flat color over
+            // blurred material reads as a plain dark blob rather than
+            // glass; a two-stop diagonal ramp gives it the same sense of
+            // depth every layer of this app's UI is built on.
+            shape.fill(
+                LinearGradient(
+                    colors: [tint.opacity(0.95), tint.opacity(0.55)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
             )
-            .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+
+            // Glossy top highlight, like light grazing the top edge of a
+            // real glass panel.
+            LinearGradient(
+                colors: [.white.opacity(0.30), .white.opacity(0.06), .clear],
+                startPoint: .top,
+                endPoint: UnitPoint(x: 0.5, y: 0.55)
+            )
+
+            // A faint inner shadow along the bottom edge, so the surface
+            // reads as a raised panel rather than a flat cutout.
+            LinearGradient(
+                colors: [.clear, .black.opacity(0.12)],
+                startPoint: .center,
+                endPoint: .bottom
+            )
         }
+        .clipShape(shape)
         .overlay(border)
+        .shadow(color: .black.opacity(elevated ? 0.30 : 0), radius: elevated ? 18 : 0, x: 0, y: elevated ? 10 : 0)
     }
 
+    /// A gradient stroke — brighter along the top-left, fading toward the
+    /// bottom-right — rather than one flat border color, so the edge
+    /// itself looks like it's catching light instead of a plain outline.
     private var border: some View {
-        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-            .strokeBorder(Theme.glassBorder, lineWidth: 1)
+        shape.strokeBorder(
+            LinearGradient(
+                colors: [.white.opacity(0.45), Theme.glassBorder, .white.opacity(0.05)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            ),
+            lineWidth: 1
+        )
     }
 }
 
 extension View {
     /// Applies the Liquid Glass surface as a background behind this view,
     /// without changing layout — use for cards, rows, and controls.
-    func glassSurface(cornerRadius: CGFloat = Radius.large, tint: Color = Theme.glassTint) -> some View {
-        modifier(GlassSurfaceModifier(cornerRadius: cornerRadius, tint: tint))
+    /// `elevated` adds a real drop shadow for standalone floating cards
+    /// (a settings group, the asset list) — leave it off for elements that
+    /// already sit inside another elevated surface, so shadows don't stack.
+    func glassSurface(cornerRadius: CGFloat = Radius.large, tint: Color = Theme.glassTint, elevated: Bool = false) -> some View {
+        modifier(GlassSurfaceModifier(cornerRadius: cornerRadius, tint: tint, elevated: elevated))
     }
 }
 
 private struct GlassSurfaceModifier: ViewModifier {
     let cornerRadius: CGFloat
     let tint: Color
+    let elevated: Bool
 
     func body(content: Content) -> some View {
-        GlassCard(cornerRadius: cornerRadius, tint: tint) { content }
+        GlassCard(cornerRadius: cornerRadius, tint: tint, elevated: elevated) { content }
     }
 }

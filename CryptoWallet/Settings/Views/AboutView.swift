@@ -26,7 +26,7 @@ struct AboutView: View {
                             .foregroundStyle(Theme.textSecondary)
                     }
                     .padding(Spacing.l)
-                    .glassSurface()
+                    .glassSurface(elevated: true)
                 }
                 .padding(Spacing.l)
             }

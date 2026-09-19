@@ -38,7 +38,7 @@ struct GlassTabBar: View {
         }
         .padding(.horizontal, Spacing.s)
         .padding(.vertical, Spacing.s)
-        .glassSurface(cornerRadius: Radius.pill)
+        .glassSurface(cornerRadius: Radius.pill, elevated: true)
         .padding(.horizontal, Spacing.l)
     }
 

@@ -65,7 +65,7 @@ private struct SecurityExplanationView: View {
                     bullet("We can't recover it for you if it's lost.")
                 }
                 .padding(Spacing.l)
-                .glassSurface()
+                .glassSurface(elevated: true)
                 .padding(.horizontal, Spacing.l)
                 Spacer()
                 PrimaryButton(title: "Continue", action: onContinue)

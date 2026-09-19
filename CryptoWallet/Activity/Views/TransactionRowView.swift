@@ -38,7 +38,7 @@ struct TransactionRowView: View {
             .padding(.horizontal, Spacing.m)
             .glassSurface(cornerRadius: Radius.small)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(ScaleButtonStyle(scale: 0.97))
     }
 
     private var statusLabel: some View {

@@ -124,7 +124,7 @@ struct BalanceCardView: View {
                     .background(Circle().fill(.white.opacity(0.18)))
                     .overlay(Circle().strokeBorder(.white.opacity(0.25), lineWidth: 1))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(ScaleButtonStyle())
         }
         .padding(.top, Spacing.xs)
     }
@@ -197,7 +197,7 @@ private struct PillActionButton: View {
             .background(Capsule().fill(background))
             .overlay(Capsule().strokeBorder(.white.opacity(style == .light ? 0 : 0.2), lineWidth: 1))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(ScaleButtonStyle())
     }
 
     private var background: AnyShapeStyle {

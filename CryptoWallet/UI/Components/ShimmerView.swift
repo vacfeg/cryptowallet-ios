@@ -70,7 +70,7 @@ struct SkeletonBalanceCard: View {
         .foregroundStyle(.white.opacity(0.15))
         .padding(Spacing.l)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .glassSurface()
+        .glassSurface(elevated: true)
         .shimmering()
     }
 }

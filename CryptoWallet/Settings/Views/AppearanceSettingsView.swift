@@ -27,7 +27,7 @@ struct AppearanceSettingsView: View {
                 }
             }
             .padding(.horizontal, Spacing.m)
-            .glassSurface()
+            .glassSurface(elevated: true)
             .padding(Spacing.l)
             .frame(maxHeight: .infinity, alignment: .top)
         }

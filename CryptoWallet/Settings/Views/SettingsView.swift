@@ -59,7 +59,7 @@ struct SettingsView: View {
             Spacer()
         }
         .padding(Spacing.m)
-        .glassSurface()
+        .glassSurface(elevated: true)
     }
 
     private func groupedSection(items: [AnyView]) -> some View {
@@ -72,7 +72,7 @@ struct SettingsView: View {
             }
         }
         .padding(.horizontal, Spacing.m)
-        .glassSurface()
+        .glassSurface(elevated: true)
     }
 
     private func navRow<Destination: View>(icon: String, title: String, @ViewBuilder destination: () -> Destination) -> AnyView {
