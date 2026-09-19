@@ -6,6 +6,14 @@ options:
   createIntermediateGroups: true
   groupSortPosition: top
   generateEmptyDirectories: false
+  # WalletCore's prebuilt XCFramework needs Swift 5.10, which only shipped
+  # with Xcode 15.3/15.4 — so CI builds with Xcode 15.4, and the generated
+  # .pbxproj must be in a format that Xcode can actually open. XcodeGen
+  # defaults to the newest format it knows (xcode16_0+), which Xcode 15.4
+  # refuses to read ("future Xcode project file format"). This pins the
+  # output format explicitly, independent of whatever XcodeGen version
+  # generates it.
+  projectFormat: xcode15_3
 
 configs:
   Debug: debug
