@@ -193,13 +193,19 @@ build fails:
    protobufs — if a field name has moved, this is the one file to check
    against whatever version of `wallet-core` Swift Package Manager resolves
    (`project.yml` pins `from: 4.0.0`, i.e. "4.0.0 or newer").
-2. **`UI/Components/GlassCard.swift`** — the `#available(iOS 26.0, *)` branch
-   uses Apple's native Liquid Glass `.glassEffect(...)` API. It requires an
-   Xcode version whose SDK actually includes iOS 26; the CI workflow
-   auto-selects whatever's newest on the runner. If it doesn't compile, delete
-   that one `if #available` branch and keep the `else` (the iOS 15–25
-   hand-built glass fallback) — visually it's already the primary look of the
-   app either way.
+2. **WalletCore's prebuilt XCFramework vs. Xcode version** — WalletCore ships a
+   *binary* framework compiled with a specific Swift compiler. The first CI
+   run on this project failed with `this SDK is not supported by the compiler`
+   because the workflow picked the newest Xcode (16.2 / Swift 6.0.3) on the
+   runner, while WalletCore 4.8.3's framework was built with Swift 5.10 —
+   the workflow now deliberately selects the oldest available Xcode 15.x
+   instead of the newest (see the comment in `ios-build.yml`). If WalletCore
+   publishes a build compiled against a newer toolchain later, that pin can
+   move forward again. (For the same reason, `UI/Components/GlassCard.swift`
+   intentionally does **not** use Apple's iOS 26 native Liquid Glass API —
+   no available Xcode has that SDK yet; it's a hand-built `.ultraThinMaterial`
+   equivalent instead, with a comment marking where to add the native path
+   later.)
 3. **`Wallet/Services/WalletManager.swift`** (`addAccount`) — uses
    `CoinType.derivationPath` and `PrivateKey.data`, both stable long-standing
    WalletCore APIs, to build custom-index derivation paths for the
