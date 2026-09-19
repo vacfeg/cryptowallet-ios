@@ -45,7 +45,7 @@ enum BigNumber {
         var digits: [UInt8] = []
         var remainder = Decimal()
         var quotient = rounded
-        let twoFiveSix = Decimal(256)
+        var twoFiveSix = Decimal(256)
         while quotient > 0 {
             var next = Decimal()
             NSDecimalDivide(&next, &quotient, &twoFiveSix, .down)

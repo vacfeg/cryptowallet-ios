@@ -10,33 +10,44 @@ struct NetworkSelectorView: View {
 
     var body: some View {
         NavigationView {
-            ZStack {
-                Theme.background.ignoresSafeArea()
-                ScrollView {
-                    VStack(spacing: Spacing.l) {
-                        if embedded {
-                            Text("Explore Networks")
-                                .font(Typography.largeTitle)
-                                .foregroundStyle(Theme.textPrimary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
+            // Conditional `ToolbarContent` inside a single `.toolbar { }`
+            // needs iOS 16's `buildIf` — split into two whole branches
+            // instead, which works back to iOS 13.
+            if embedded {
+                screenBody
+                    .navigationTitle("")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .navigationBarHidden(true)
+            } else {
+                screenBody
+                    .navigationTitle("Select Network")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("Done") { dismiss() }.foregroundStyle(Theme.textPrimary)
                         }
-
-                        section(title: "EVM Networks", networks: SupportedNetworks.evmNetworks)
-                        section(title: "Coming Soon", networks: SupportedNetworks.previewOnlyNetworks)
                     }
-                    .padding(Spacing.l)
-                    .padding(.bottom, 120)
-                }
             }
-            .navigationTitle(embedded ? "" : "Select Network")
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarHidden(embedded)
-            .toolbar {
-                if !embedded {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("Done") { dismiss() }.foregroundStyle(Theme.textPrimary)
+        }
+    }
+
+    private var screenBody: some View {
+        ZStack {
+            Theme.background.ignoresSafeArea()
+            ScrollView {
+                VStack(spacing: Spacing.l) {
+                    if embedded {
+                        Text("Explore Networks")
+                            .font(Typography.largeTitle)
+                            .foregroundStyle(Theme.textPrimary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
+
+                    section(title: "EVM Networks", networks: SupportedNetworks.evmNetworks)
+                    section(title: "Coming Soon", networks: SupportedNetworks.previewOnlyNetworks)
                 }
+                .padding(Spacing.l)
+                .padding(.bottom, 120)
             }
         }
     }

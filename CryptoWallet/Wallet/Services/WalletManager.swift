@@ -119,7 +119,9 @@ final class WalletManager: ObservableObject {
     /// index 0) and swapping just the final `address_index` component —
     /// avoids hand-encoding each chain's SLIP-44 coin number ourselves.
     private func derivationPath(coinType: CoinType, index: Int) -> String {
-        let base = coinType.derivationPath
+        // Confirmed from a real compiler error: `derivationPath` is a
+        // method on WalletCore's `CoinType`, not a property.
+        let base = coinType.derivationPath()
         var components = base.split(separator: "/").map(String.init)
         guard !components.isEmpty else { return base }
         components[components.count - 1] = "\(index)"

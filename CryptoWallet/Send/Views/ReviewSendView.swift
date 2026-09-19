@@ -10,27 +10,36 @@ struct ReviewSendView: View {
 
     var body: some View {
         NavigationView {
-            ZStack {
-                Theme.background.ignoresSafeArea()
-
-                if let result = viewModel.broadcastResult {
+            // Conditional `ToolbarContent` inside a single `.toolbar { }`
+            // needs iOS 16's `buildIf` — split into two whole branches
+            // instead (mirroring the same broadcastResult check the body
+            // already branches on), which works back to iOS 13.
+            if let result = viewModel.broadcastResult {
+                background {
                     SendSuccessView(network: viewModel.network, result: result) {
                         onFinished()
                     }
-                } else {
-                    reviewContent
                 }
-            }
-            .navigationTitle("Review")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                if viewModel.broadcastResult == nil {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button("Back") { dismiss() }.foregroundStyle(Theme.textPrimary)
+                .navigationTitle("Review")
+                .navigationBarTitleDisplayMode(.inline)
+            } else {
+                background { reviewContent }
+                    .navigationTitle("Review")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button("Back") { dismiss() }.foregroundStyle(Theme.textPrimary)
+                        }
                     }
-                }
+                    .interactiveDismissDisabled(viewModel.isSending)
             }
-            .interactiveDismissDisabled(viewModel.isSending)
+        }
+    }
+
+    private func background<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        ZStack {
+            Theme.background.ignoresSafeArea()
+            content()
         }
     }
 
