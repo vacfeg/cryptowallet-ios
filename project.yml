@@ -52,6 +52,15 @@ targets:
     dependencies:
       - package: WalletCore
         product: WalletCore
+      # WalletCore's own module imports "SwiftProtobuf" internally, but
+      # ships it as its own renamed binary product (avoids clashing with a
+      # real apple/swift-protobuf dependency elsewhere in a host app) —
+      # confirmed from WalletCore's Package.swift, which declares exactly
+      # two products: "WalletCore" and "WalletCoreSwiftProtobuf". Without
+      # linking the second one too, WalletCore fails to build with
+      # "no such module 'SwiftProtobuf'".
+      - package: WalletCore
+        product: WalletCoreSwiftProtobuf
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.cryptowallet.app
