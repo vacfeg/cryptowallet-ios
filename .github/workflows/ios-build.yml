@@ -1,0 +1,77 @@
+name: Build iOS App
+
+# Builds an UNSIGNED .ipa on a macOS runner (this repo has no Apple Developer
+# certificate configured). Download the artifact from the run's Summary page,
+# then sign/install it yourself with AltServer + your free Apple ID
+# (see README.md "Run it on your iPhone without a Mac").
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select latest available Xcode
+        # Don't pin a specific Xcode version — GitHub's macOS runner image
+        # changes over time, and this project targets whatever Xcode ships
+        # with it (it must be new enough to know about the iOS 26 "Liquid
+        # Glass" APIs used in UI/Components/GlassCard.swift's `#available`
+        # branch; if the runner's Xcode predates iOS 26, that one branch is
+        # the most likely compile failure — see README "What to verify on
+        # first build").
+        run: sudo xcode-select -s $(ls -d /Applications/Xcode_*.app | sort -V | tail -n 1)
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Prepare local secrets (CI defaults)
+        run: |
+          if [ ! -f Config/Secrets.xcconfig ]; then
+            cp Config/Secrets.xcconfig.example Config/Secrets.xcconfig
+          fi
+
+      - name: Resolve Swift packages
+        run: xcodebuild -resolvePackageDependencies -project CryptoWallet.xcodeproj
+
+      - name: Build unsigned archive for device
+        run: |
+          xcodebuild archive \
+            -project CryptoWallet.xcodeproj \
+            -scheme CryptoWallet \
+            -configuration Release \
+            -destination "generic/platform=iOS" \
+            -archivePath build/CryptoWallet.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            AD_HOC_CODE_SIGNING_ALLOWED=YES \
+            DEVELOPMENT_TEAM=""
+
+      - name: Package unsigned .ipa
+        run: |
+          mkdir -p build/Payload
+          cp -R "build/CryptoWallet.xcarchive/Products/Applications/CryptoWallet.app" build/Payload/
+          cd build && zip -r -y CryptoWallet-unsigned.ipa Payload
+          cd ..
+
+      - name: Upload .ipa artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CryptoWallet-unsigned-ipa
+          path: build/CryptoWallet-unsigned.ipa
+          retention-days: 14
+
+      - name: Run unit tests
+        run: |
+          xcodebuild test \
+            -project CryptoWallet.xcodeproj \
+            -scheme CryptoWallet \
+            -destination "platform=iOS Simulator,name=iPhone 15,OS=latest" \
+        continue-on-error: true

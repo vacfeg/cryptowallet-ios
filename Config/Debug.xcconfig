@@ -1,0 +1,4 @@
+// Pulls in the developer's local, gitignored secrets (copied from
+// Secrets.xcconfig.example). See Config/Secrets.xcconfig.example for what
+// each key does — every one is optional.
+#include? "Secrets.xcconfig"

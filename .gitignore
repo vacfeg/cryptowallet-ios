@@ -1,0 +1,28 @@
+# Xcode / build products (generated, never committed)
+*.xcodeproj/
+*.xcworkspace/
+build/
+DerivedData/
+*.ipa
+*.xcarchive
+
+# XcodeGen output is regenerated from project.yml — do not commit it
+CryptoWallet.xcodeproj/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+
+# Secrets — never commit real API keys or signing material
+Config/Secrets.xcconfig
+*.p12
+*.mobileprovision
+*.cer
+
+# macOS
+.DS_Store
+
+# User-specific Xcode state
+xcuserdata/
+*.xcuserstate
