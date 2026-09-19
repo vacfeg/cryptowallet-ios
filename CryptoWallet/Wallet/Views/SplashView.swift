@@ -9,7 +9,7 @@ struct SplashView: View {
         ZStack {
             Theme.background.ignoresSafeArea()
 
-            Theme.heroBackgroundGradient
+            AnimatedBackground()
                 .opacity(glowOpacity)
                 .ignoresSafeArea()
 

@@ -11,7 +11,7 @@ struct UnlockView: View {
     var body: some View {
         ZStack {
             Theme.background.ignoresSafeArea()
-            Theme.heroBackgroundGradient.ignoresSafeArea()
+            AnimatedBackground().ignoresSafeArea()
 
             VStack(spacing: Spacing.l) {
                 Spacer()

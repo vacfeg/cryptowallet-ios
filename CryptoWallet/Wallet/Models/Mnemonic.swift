@@ -53,11 +53,15 @@ enum MnemonicService {
         Mnemonic.isValidWord(word: word.lowercased())
     }
 
+    /// Splits on ANY whitespace (spaces, tabs, newlines) — not just a
+    /// literal " " — since the import screen's multi-line text editor lets
+    /// people paste or type a phrase with a line break between words (a
+    /// common way phrases get exported elsewhere), which a space-only split
+    /// would silently glue into one invalid "word".
     static func normalize(_ phrase: String) -> String {
         phrase
-            .trimmingCharacters(in: .whitespacesAndNewlines)
             .lowercased()
-            .split(separator: " ")
+            .split(whereSeparator: { $0.isWhitespace })
             .map(String.init)
             .joined(separator: " ")
     }

@@ -52,13 +52,39 @@ struct BalanceCardView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: Radius.large, style: .continuous)
-                .strokeBorder(.white.opacity(0.12), lineWidth: 1)
+                .strokeBorder(.white.opacity(0.16), lineWidth: 1)
         )
         .overlay(
-            LinearGradient(colors: [.white.opacity(0.08), .clear], startPoint: .top, endPoint: .center)
+            LinearGradient(colors: [.white.opacity(0.10), .clear], startPoint: .top, endPoint: .center)
                 .clipShape(RoundedRectangle(cornerRadius: Radius.large, style: .continuous))
                 .allowsHitTesting(false)
         )
+        .overlay(CardSheen().clipShape(RoundedRectangle(cornerRadius: Radius.large, style: .continuous)))
         .cardShadow()
+    }
+}
+
+/// A slow diagonal light streak drifting across the card — the glossy
+/// "reflection" real premium fintech cards have, driven by
+/// `TimelineView(.animation)` so it never glitches on reappear.
+private struct CardSheen: View {
+    var body: some View {
+        TimelineView(.animation) { context in
+            let t = context.date.timeIntervalSinceReferenceDate
+            let progress = (sin(t * 0.35) + 1) / 2 // 0...1, slow breathing sweep
+
+            GeometryReader { geo in
+                LinearGradient(
+                    colors: [.clear, .white.opacity(0.14), .clear],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .frame(width: geo.size.width * 0.6)
+                .rotationEffect(.degrees(20))
+                .offset(x: -geo.size.width * 0.3 + progress * geo.size.width * 1.1)
+                .blendMode(.plusLighter)
+            }
+        }
+        .allowsHitTesting(false)
     }
 }

@@ -16,7 +16,7 @@ struct OnboardingView: View {
         NavigationView {
             ZStack {
                 Theme.background.ignoresSafeArea()
-                Theme.heroBackgroundGradient.ignoresSafeArea()
+                AnimatedBackground().ignoresSafeArea()
 
                 NavigationLink(destination: CreateWalletFlowView(), isActive: $showCreate) { EmptyView() }
                     .hidden()

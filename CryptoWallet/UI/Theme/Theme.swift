@@ -49,11 +49,16 @@ enum Theme {
     ))
 
     // MARK: Brand / accents
+    //
+    // One controlled blue→indigo hue family, not four competing accent
+    // colors — the earlier palette mixed blue/indigo/violet/cyan as equal
+    // partners, which reads as a generic multicolor "AI" gradient. Every
+    // brand surface here now ramps within a single hue instead.
 
-    static let indigo = Color(hex: "#6C5CE7")
-    static let violet = Color(hex: "#8B5CF6")
-    static let blue = Color(hex: "#3B82F6")
-    static let cyan = Color(hex: "#22D3EE")
+    static let blue = Color(hex: "#2F5CFF")
+    static let indigo = Color(hex: "#5A4FE0")
+    static let indigoDeep = Color(hex: "#1B2160")
+    static let violet = indigo // kept as an alias so existing call sites don't need touching
 
     static let success = Color(hex: "#2ED47A")
     static let danger = Color(hex: "#FF5C72")
@@ -62,19 +67,22 @@ enum Theme {
     // MARK: Gradients
 
     static let brandGradient = LinearGradient(
-        colors: [blue, indigo, violet],
+        colors: [blue, indigo],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )
 
+    /// The signature glossy card look — a single tight blue→indigo ramp
+    /// with a bright highlight corner, matching a real glass fintech card
+    /// rather than a flat multi-hue fill.
     static let balanceCardGradient = LinearGradient(
-        colors: [Color(hex: "#1B2145"), Color(hex: "#2A1B45"), Color(hex: "#151833")],
+        colors: [Color(hex: "#3D62FF"), Color(hex: "#2A3FC7"), indigoDeep],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )
 
     static let heroBackgroundGradient = RadialGradient(
-        colors: [violet.opacity(0.35), blue.opacity(0.12), .clear],
+        colors: [indigo.opacity(0.45), blue.opacity(0.16), .clear],
         center: .top,
         startRadius: 10,
         endRadius: 420

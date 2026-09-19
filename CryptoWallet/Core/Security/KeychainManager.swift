@@ -23,7 +23,17 @@ enum KeychainManager {
     ///   passcode fallback) at *read* time, backed by the Secure Enclave.
     ///   Used exclusively for seed phrase storage — every other item uses
     ///   the plain "unlocked, this device only" class.
-    static func save(_ data: Data, key: String, requireBiometry: Bool = false) throws {
+    ///
+    ///   If the biometry-gated write fails — no biometry enrolled on the
+    ///   device, or a restricted entitlement under ad-hoc/personal-team
+    ///   signing, both real conditions on a sideloaded build — this falls
+    ///   back to the plain "unlocked, this device only" protection rather
+    ///   than failing wallet creation/import outright. The seed is still
+    ///   encrypted at rest and inaccessible while the device is locked
+    ///   either way; only the extra per-signature biometric re-prompt is
+    ///   lost in the fallback case.
+    @discardableResult
+    static func save(_ data: Data, key: String, requireBiometry: Bool = false) throws -> Bool {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
@@ -32,27 +42,32 @@ enum KeychainManager {
         // Remove any existing item first — SecItemAdd fails on duplicates.
         SecItemDelete(query as CFDictionary)
 
-        var newItem = query
-        newItem[kSecValueData as String] = data
+        if requireBiometry, let access = SecAccessControlCreateWithFlags(
+            nil,
+            kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
+            .biometryCurrentSet,
+            nil
+        ) {
+            var biometricItem = query
+            biometricItem[kSecValueData as String] = data
+            biometricItem[kSecAttrAccessControl as String] = access
 
-        if requireBiometry {
-            guard let access = SecAccessControlCreateWithFlags(
-                nil,
-                kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
-                .biometryCurrentSet,
-                nil
-            ) else {
-                throw KeychainError.unexpectedStatus(errSecParam)
+            let status = SecItemAdd(biometricItem as CFDictionary, nil)
+            if status == errSecSuccess {
+                return true
             }
-            newItem[kSecAttrAccessControl as String] = access
-        } else {
-            newItem[kSecAttrAccessible as String] = kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+            NSLog("CryptoWallet: biometry-gated Keychain write failed (OSStatus \(status)); falling back to standard protection.")
         }
 
-        let status = SecItemAdd(newItem as CFDictionary, nil)
+        var plainItem = query
+        plainItem[kSecValueData as String] = data
+        plainItem[kSecAttrAccessible as String] = kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+
+        let status = SecItemAdd(plainItem as CFDictionary, nil)
         guard status == errSecSuccess else {
             throw KeychainError.unexpectedStatus(status)
         }
+        return false
     }
 
     static func load(key: String, prompt: String? = nil) throws -> Data {
